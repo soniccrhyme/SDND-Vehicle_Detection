@@ -96,7 +96,7 @@ Still, a few false positives peaked through, especially when the video goes over
 
 ### Video
 
-Project Video: [GitHub](https://github.com/soniccrhyme/SDND-Vehicle_Detection/blob/master/result.mp4)  
+Project Video: ([GitHub](https://github.com/soniccrhyme/SDND-Vehicle_Detection/blob/master/result.mp4) / [YouTube](https://youtu.be/Ep0cSGylHto))
 
 
 ### Discussion
@@ -110,4 +110,3 @@ Few problems & challenges:
 - As the lapse with the white car showed, the pipeline seems to have a harder time detecting cars that are either further away or exhibit lower contrast with their surroundings. Shadows, cloud cover and cityscapes might represent scenarios in which this pipeline will likely fail. As written, I don't imagine it would fare too well in the dark, either.
 - The pipeline still generates a few false positives, most notably on the first bridge, where it detects a vehicle in part of the guardrail (and maybe detects one or two cars coming in the opposite direction). Smoothing across several frames didn't make these false-positives disappear. Reducing the incidence of false positives may be achieved by adding more training images, or perhaps by adding more features (more color spaces, more orientation bins for HOG features, etc).
 - As written, the pipeline doesn't really utilize object-oriented programming. I have made a single class (```Tracker()```), with one property (```self.recent_heatmaps```), but that's a half-measure. The code still uses global variables and such. Ideally, I would like to make the pipeline more OO, thus more inline with best practices and, hopefully, more elegant.
--
