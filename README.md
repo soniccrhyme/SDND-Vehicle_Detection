@@ -96,7 +96,7 @@ Still, a few false positives peaked through, especially when the video goes over
 
 ### Video
 
-Project Video: ([GitHub](???) / [YouTube](???))  
+Project Video: [GitHub](https://github.com/soniccrhyme/SDND-Vehicle_Detection/blob/master/result.mp4)  
 
 
 ### Discussion
