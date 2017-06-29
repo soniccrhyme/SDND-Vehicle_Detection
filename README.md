@@ -14,8 +14,17 @@
 [heatmap_eg]: ./report_images/heatmap_example.png "Heatmap Example"
 [labels_eg]: ./report_images/labels_example.png "Labels Example"
 [output_eg]: ./report_images/output_example.png "Output Example"
+[smooth_output_eg]: ./report_images/smooth_output_example.png "Smooth Output Example"
 
 ---
+### Project Files
+
+- ```Vehicle_Tracker.ipynb``` - jupyter notebook contains the bulk of the pipeline and requisite functions
+- ```tracker.py``` - ``Tracker()`` class definition, used for smoothing across frames
+- ```input_images.py``` - run first; reads in training images and converts to parameter defined color space; resultant array of images is pickled along with respective labels. Training images can be found at [Udacity's project github](https://github.com/udacity/CarND-Vehicle-Detection)
+- ```project_video.mp4``` - video input to be processed
+- ```result.mp4``` - output video from processing ```project_video.mp4``` via pipeline in ```Vehicle_Tracker.ipynb```
+
 ### Brief Project Description
 
 This code detects and tracks other cars on the road that are visible from the front-center mounted dashboard camera stream. Classification made use of color histogram, spatial, and Histogram of Oriented Gradients (HOG) features.
@@ -72,7 +81,11 @@ And finally, the output image is created by outlining the extremes of each label
 
 ![Output Example][output_eg]
 
-As demonstrated above, processing single frames yields unwieldy bounding boxes which can be much smaller or larger than the car itself. This can be mitigated by smoothing heatmaps over several frames (discussed further in Video Implementation, Question 2)
+Processing single frames yields bounding boxes which abruptly change from frame to frame. This can be mitigated by smoothing heatmaps over several frames (discussed further in Video Implementation, Question 2). The boxes yielded by smoothing across frames can be seen below (same frame, taken from result.mp4, largely similar result):
+
+![Smoothed Output Example][smoothed_output_eg]
+
+
 
 #### 3. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
@@ -92,6 +105,9 @@ Project Video: ([GitHub](???) / [YouTube](???))
 
 Few problems & challenges:
 
-- Speed: as written, the vehicle detection method runs at about 2.80 seconds per frame; if its to run in real time, it would need to be 50-100x faster (depending on the frame-rate of the incoming video). This might be achieved several ways: 1) by limiting the sliding window search to the edges of the video and around previous vehicle detections; 2)
+- Processing Speed: as written, the vehicle detection method runs at about 2.50 seconds per frame; if its to run in real time, it would need to be 50-100x faster (depending on the frame-rate of the incoming video). This might be achieved several ways: 1) by limiting the sliding window search to the edges of the video and around previous vehicle detections; 2)
 - That white car!! - after the second bridge, there are a few seconds (more than I'd care to explicitly number) where the white car is not detected at all. I noticed that in this particular circumstance, the RGB color space did better than the YCbCr; a solution might thus involve using multiple color spaces as opposed to just one. I avoided this step because it would've nearly doubled the amount of time it would take to process each frame. Another possible solution is just to train the classifier on images of the white car directly from the video feed - for real autonomous vehicle projects, this may very well be a better long-run solution, especially since in-car computation time is much more limited.  
-- As the lapse with the white car showed, the pipeline seems to fare less well with cars that are either further away or exhibit lower contrast with their surroundings. Shadows, cloud cover and cityscapes might represent scenarios in which this pipeline will likely fail. As written, I don't imagine it would fare too well in the dark, either.
+- As the lapse with the white car showed, the pipeline seems to have a harder time detecting cars that are either further away or exhibit lower contrast with their surroundings. Shadows, cloud cover and cityscapes might represent scenarios in which this pipeline will likely fail. As written, I don't imagine it would fare too well in the dark, either.
+- The pipeline still generates a few false positives, most notably on the first bridge, where it detects a vehicle in part of the guardrail (and maybe detects one or two cars coming in the opposite direction). Smoothing across several frames didn't make these false-positives disappear. Reducing the incidence of false positives may be achieved by adding more training images, or perhaps by adding more features (more color spaces, more orientation bins for HOG features, etc).
+- As written, the pipeline doesn't really utilize object-oriented programming. I have made a single class (```Tracker()```), with one property (```self.recent_heatmaps```), but that's a half-measure. The code still uses global variables and such. Ideally, I would like to make the pipeline more OO, thus more inline with best practices and, hopefully, more elegant.
+-
