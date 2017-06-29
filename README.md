@@ -72,15 +72,26 @@ And finally, the output image is created by outlining the extremes of each label
 
 ![Output Example][output_eg]
 
+As demonstrated above, processing single frames yields unwieldy bounding boxes which can be much smaller or larger than the car itself. This can be mitigated by smoothing heatmaps over several frames (discussed further in Video Implementation, Question 2)
+
+#### 3. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
+
+False positives were few. Increasing the heatmap threshold incurs a tradeoff between limiting false positives and exasperating fasle negatives. Luckily, the XGBoost classifier performs extremely well, achieving an f1-score of 99.2% when the YCbCr color space is used.
+
+Still, a few false positives peaked through, especially when the video goes over the bridge. Another problem was that when the pipeline processed one frame at a time, the bounding boxes were jump with each frame. Both the problem of false positives as well as the jumpy bounding boxes are ameliorated by averaging heatmaps over several frames. This was done by invoking a simple ```Tracker()``` class (found in tracker.py), which had a lone property, ```self.recent_heatmaps```.
 
 
-### Video Implementation
+### Video
 
-#### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
+Project Video: ([GitHub](???) / [YouTube](???))  
 
-
-#### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
 ### Discussion
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+
+Few problems & challenges:
+
+- Speed: as written, the vehicle detection method runs at about 2.80 seconds per frame; if its to run in real time, it would need to be 50-100x faster (depending on the frame-rate of the incoming video). This might be achieved several ways: 1) by limiting the sliding window search to the edges of the video and around previous vehicle detections; 2)
+- That white car!! - after the second bridge, there are a few seconds (more than I'd care to explicitly number) where the white car is not detected at all. I noticed that in this particular circumstance, the RGB color space did better than the YCbCr; a solution might thus involve using multiple color spaces as opposed to just one. I avoided this step because it would've nearly doubled the amount of time it would take to process each frame. Another possible solution is just to train the classifier on images of the white car directly from the video feed - for real autonomous vehicle projects, this may very well be a better long-run solution, especially since in-car computation time is much more limited.  
+- As the lapse with the white car showed, the pipeline seems to fare less well with cars that are either further away or exhibit lower contrast with their surroundings. Shadows, cloud cover and cityscapes might represent scenarios in which this pipeline will likely fail. As written, I don't imagine it would fare too well in the dark, either.
