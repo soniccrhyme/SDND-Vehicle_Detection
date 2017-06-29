@@ -83,7 +83,7 @@ And finally, the output image is created by outlining the extremes of each label
 
 Processing single frames yields bounding boxes which abruptly change from frame to frame. This can be mitigated by smoothing heatmaps over several frames (discussed further in Video Implementation, Question 2). The boxes yielded by smoothing across frames can be seen below (same frame, taken from result.mp4, largely similar result):
 
-![Smoothed Output Example][smoothed_output_eg]
+![Smoothed Output Example][smooth_output_eg]
 
 
 
